@@ -9,6 +9,7 @@ public class Player : MonoBehaviour {
     public float rotatingSpeed = 2;
 
     [Header("Equipment")]
+    public int health = 3;
     public Sword sword;
     public Bow bow;
     public int arrowAmount = 15;
@@ -19,10 +20,13 @@ public class Player : MonoBehaviour {
     [Header("Movement")]
     public float movingVelocity;
     public float jumpingVelocity;
+    public float knockbackForce;
 
     private Rigidbody playerRigidbody;
     private bool canJump;
     private Quaternion targetModelRotation;
+    private float knockbackTimer;
+    
 
 	// Use this for initialization
 	void Start () {
@@ -43,8 +47,14 @@ public class Player : MonoBehaviour {
 
         model.transform.rotation = Quaternion.Lerp(model.transform.rotation, targetModelRotation, Time.deltaTime * rotatingSpeed);
 
-        ProcessInput();
-
+        if (knockbackTimer > 0)
+        {
+            knockbackTimer -= Time.deltaTime;
+        }
+        else
+        {
+            ProcessInput();
+        }
 
     }
 
@@ -123,5 +133,35 @@ public class Player : MonoBehaviour {
         bombObject.GetComponent<Rigidbody>().AddForce(throwingDirection * throwingSpeed);
 
         bombAmount--;
+    }
+    private void OnTriggerEnter(Collider otherCollider)
+    {
+        if(otherCollider.GetComponent<EnemyBullet>() != null)
+        {
+            Hit((transform.position - otherCollider.transform.position).normalized);
+        }
+        
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.GetComponent<Enemy>())
+        {
+            Hit((transform.position - collision.transform.position).normalized);
+        }
+    }
+
+    private void Hit (Vector3 direction)
+    {
+        Vector3 knockbackDirection = (direction + Vector3.up).normalized;
+        playerRigidbody.AddForce(knockbackDirection * knockbackForce);
+        knockbackTimer = 1f;
+        Debug.Log(knockbackDirection);
+
+        health--;
+        if (health <= 0)
+        {
+           Destroy(gameObject);
+        }
     }
 }
