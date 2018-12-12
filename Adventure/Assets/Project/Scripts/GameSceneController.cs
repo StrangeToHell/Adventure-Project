@@ -9,7 +9,7 @@ public class GameSceneController : MonoBehaviour {
     public Player player;
 
     [Header("UI")]
-    public Text HealthText;
+    public GameObject[] hearts;
     public Text BombText;
     public Text ArrowText;
 
@@ -22,13 +22,19 @@ public class GameSceneController : MonoBehaviour {
 	void Update () {
         if (player != null)
         {   
-            HealthText.text = "Health: " + player.health;
+           for (int i = 0; i < hearts.Length; i++)
+            {
+                hearts[i].SetActive(i < player.health);
+            }
             BombText.text = "Bombs: " + player.bombAmount;
             ArrowText.text = "Arrows: " + player.arrowAmount;
 
         } else
         {
-            HealthText.text = "Health: 0";
+            for (int i = 0; i < hearts.Length; i++)
+            {
+                hearts[i].SetActive(false);
+            }
             BombText.text = "Bombs: 0";
             ArrowText.text = "Arrows: 0";
         }

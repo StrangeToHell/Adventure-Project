@@ -139,6 +139,7 @@ public class Player : MonoBehaviour {
         if(otherCollider.GetComponent<EnemyBullet>() != null)
         {
             Hit((transform.position - otherCollider.transform.position).normalized);
+            Destroy(otherCollider.gameObject);
         }
         
     }
