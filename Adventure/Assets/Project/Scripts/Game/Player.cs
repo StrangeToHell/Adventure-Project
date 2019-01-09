@@ -21,6 +21,17 @@ public class Player : MonoBehaviour {
     public float movingVelocity;
     public float jumpingVelocity;
     public float knockbackForce;
+    private bool justTeleported;
+
+    public bool JustTeleported
+    {
+        get
+        {
+            bool returnValue = justTeleported;
+            justTeleported = false;
+            return returnValue;
+        }
+    }
 
     private Rigidbody playerRigidbody;
     private bool canJump;
@@ -164,5 +175,12 @@ public class Player : MonoBehaviour {
         {
            Destroy(gameObject);
         }
+    }
+
+    public void Teleport (Vector3 target)
+    {
+        transform.position = target;
+        justTeleported = true;
+
     }
 }
